@@ -1,0 +1,15 @@
+{
+  "conf_threshold": 0.85,
+  "entropy_threshold": 0.35,
+  "uncertain_floor": 0.5,
+  "temperature": 0.9718133211135864,
+  "test_escalation_rate": 0.29562803608605137,
+  "test_fastpath_acc": 0.9349753694581281,
+  "test_escalated_acc": 0.6291079812206573,
+  "test_overall_acc": 0.8445523941707148,
+  "test_dangerous_total": 82,
+  "test_dangerous_caught": 52,
+  "test_dangerous_leaked": 30,
+  "compute_saving_vs_always_on": 0.7043719639139486,
+  "test_dangerous_caught_pct": 0.6341463414634146
+}

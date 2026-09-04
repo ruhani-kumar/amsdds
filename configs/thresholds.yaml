@@ -1,0 +1,24 @@
+# configs/thresholds.yaml
+# Derived from the validation sweep, not asserted. See threshold_sweep.csv/png.
+# Layer 1: MobileNetV3-Large (fine-tuned), test acc 0.8446, macro-F1 0.7059
+ 
+decision_engine:
+  conf_threshold: 0.85
+  entropy_threshold: 0.35
+  uncertain_floor: 0.5
+ 
+calibration:
+  temperature: 0.9718
+  applied_to: layer1_logits
+ 
+classes: ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
+malignant_classes: ['mel', 'bcc', 'akiec']
+ 
+# Measured on the held-out test split with the thresholds above.
+measured:
+  escalation_rate: 0.2956
+  fastpath_accuracy: 0.9350
+  escalated_subset_accuracy: 0.6291
+  dangerous_misses_total: 82
+  dangerous_misses_caught: 52
+  dangerous_misses_leaked: 30

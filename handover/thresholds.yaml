@@ -1,0 +1,59 @@
+# AMSDDS pipeline config — SINGLE source of truth. /model-info serves this.
+# All numbers measured on lesion-grouped held-out splits. Do not hand-edit
+# without re-measuring; see README "changing weights" section.
+
+weights_dir: ../weights            # override with AMSDDS_WEIGHTS env var
+
+classes: [akiec, bcc, bkl, df, mel, nv, vasc]
+malignant_classes: [mel, bcc, akiec]
+class_names:
+  akiec: Actinic keratosis / intraepithelial carcinoma
+  bcc:   Basal cell carcinoma
+  bkl:   Benign keratosis
+  df:    Dermatofibroma
+  mel:   Melanoma
+  nv:    Melanocytic nevus
+  vasc:  Vascular lesion
+
+layer1:                            # multimodal MobileNetV3 (image + age/sex/localization)
+  file: layer1_multimodal_mobilenetv3.pt
+  img_size: 299
+  resize_short: 324
+  # temperature/meta encoders are read from inside the checkpoint (T=0.959)
+
+layer2:                            # frozen RT-DETR encoder + GOA-tuned MLP head
+  file: layer2_rtdetr.pt           # encoder (backbone + hybrid encoder), img 512
+  img_size: 512
+  resize_short: 588
+  hf_name: PekingU/rtdetr_r50vd
+  heads:                           # both loaded; select per request or by default
+    ham:    layer2_rtdetr_goa_head.pt          # dermoscopy-only head (T=0.735)
+    hampad: layer2_rtdetr_goa_head_hampad.pt   # phone-capable head   (T=0.803)
+  default_head: hampad
+  ensemble_with_layer1: false
+
+decision_engine:                   # gate derived for the 299 multimodal L1 (thresholds4299)
+  conf_threshold: 0.5
+  entropy_threshold: 0.3
+  uncertain_floor: 0.5
+  risk_threshold: 0.26             # sum P(mel,bcc,akiec) >= this -> risk flag,
+                                   # tuned on PAD val (sens 0.964), test sens 0.966
+
+ood:
+  file: ood_scores_mobilenet.npz   # Mahalanobis on L1 1280-d image features (299 model)
+  threshold: null                  # null -> unk_thr inside the npz (2583.9)
+
+preprocessing:
+  color_constancy: true            # shades-of-gray p6 — MUST match training
+  color_constancy_power: 6
+
+measured:                          # for /model-info and the deck; not load-bearing
+  layer1: {test_acc: 0.8446, test_macro_f1: 0.7077, temperature: 0.959,
+           escalation_rate: 0.2831, fastpath_accuracy: 0.9371,
+           dangerous_misses: 75, caught_by_gate: 54, leaked: 21}
+  layer2_hampad: {ham_test_acc: 0.857, ham_test_f1: 0.736,
+                  pad_test_acc: 0.638, pad_test_f1_present_classes: 0.55}
+  risk_flag: {pad_test_malignant_sensitivity: 0.966, pad_test_benign_specificity: 0.484,
+              tuned_on: pad_val}
+  ood: {far_auroc: 0.907, unk_thr: 2583.9}
+  pending: "adapted Layer 1 (HAM+PAD) -> then re-fit OOD, re-sweep gate, re-score GOA"

@@ -23,3 +23,4 @@ flask-cors>=4              # handover API parity (not yet enabled in backend/app
 # Training / evaluation code in ml/ only (not used by the backend at inference).
 # scikit-learn>=1.3   # ml/preprocessing/splits.py
 # pandas>=2.0         # ml/preprocessing ; handover test_pipeline.py --parity
+huggingface_hub>=0.30

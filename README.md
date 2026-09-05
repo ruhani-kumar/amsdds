@@ -10,6 +10,9 @@ Malignant set: `mel`, `bcc`, `akiec`.
 
 > **Not a medical device.** Research prototype only. Never use it to make or
 > defer a clinical decision.
+> For all implementation details:
+https://drive.google.com/drive/folders/1Ybb5ph73MCuxANOva6fjZObB14sieSyK?usp=sharing (Layer 2)
+https://drive.google.com/drive/folders/14dB4JVh2R8Y0l3S2SzPRHMkCjnmHUWBc?usp=sharing (Layer 1 + OOD)
 
 ---
 
@@ -221,6 +224,7 @@ helps ensure the intended feature representation is used at runtime.
 
 Checkpoints are external and git-ignored.
 
+**Weights can be found at : https://drive.google.com/drive/folders/1pe8xQ88ZVkg674g2GhLDlFwQRnowgduf?usp=sharing**
 ---
 
 ## API
